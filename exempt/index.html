@@ -126,8 +126,8 @@
   const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imx1Z2xzaHJma2tlYWNtZWZudmxtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzIwNjE0NTIsImV4cCI6MjA4NzYzNzQ1Mn0.LrJ-ejXJGqVGzrJyL5nFW45J92-MxrcKuEpE2EGNsIo';
   const R2_WORKER_URL = 'https://guild-images.hongsb9912.workers.dev';
   const R2_API_KEY = 'guild-manager-r2-key-2026';
-  const SCORE_FULL_THRESHOLD = 90000;  // 9만 이상 → 전체 면제
-  const SCORE_HALF_THRESHOLD = 55000;  // 5.5만 이상 ~ 9만 미만 → 절반 면제 / 5.5만 미만은 신청 불가
+ const SCORE_FULL_THRESHOLD = 90000;  // 9만 이상 → 전체 면제
+const SCORE_HALF_THRESHOLD = 90000;  // 9만 미만 → 신청 불가
 
   // 길드 리스트 (수동 입력용 드롭다운)
   // [DB키, 표시이름] — 값은 데이터 연결용 키 유지, 화면엔 버니/늑대/쿠거
@@ -469,7 +469,7 @@ const badge = reqType === 'full' ? '<span class="badge-9만 text-[10px] font-bla
     if (!state.mainChar) { toast('본캐를 먼저 검색해주세요', 'error'); return; }
     const reqType = requestTypeFromScore(state.mainScore);
     if (!reqType) { toast('수로 점수를 입력해주세요', 'error'); return; }
-    if (reqType === 'ineligible') { toast('본캐 수로 점수 5.5만 이상이어야 신청 가능합니다', 'error'); return; }
+    if (reqType === 'ineligible') { toast('본캐 수로 점수 9만 이상이어야 신청 가능합니다', 'error'); return; }
 
     // 선택된 부캐 (자동 매칭은 selected, 수동은 모두 포함)
     const selectedSubs = state.subChars.filter(s => s.manual ? (s.name && s.name.trim()) : s.selected);
