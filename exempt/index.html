@@ -39,24 +39,24 @@
     <p class="text-[11px] text-gray-500 mt-1">버니 길드 · 본캐닉만 입력하면 자동 분류</p>
   </div>
 
-  <!-- 점수 기준 안내 -->
-  <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-3 mb-4">
-    <div class="text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-2"><i class="fas fa-circle-info mr-1 text-pink-400"></i>본캐 수로 점수 기준</div>
-    <div class="space-y-1 text-[11px]">
-      <div class="flex items-center justify-between bg-amber-50 rounded-lg px-3 py-1.5">
-        <span class="font-bold text-amber-700">9만 이상</span>
-        <span class="font-black text-amber-700">전체 면제</span>
-      </div>
-      <div class="flex items-center justify-between bg-blue-50 rounded-lg px-3 py-1.5">
-        <span class="font-bold text-blue-700">5.5만 이상 ~ 9만 미만</span>
-        <span class="font-black text-blue-700">절반 면제</span>
-      </div>
-      <div class="flex items-center justify-between bg-red-50 rounded-lg px-3 py-1.5">
-        <span class="font-bold text-red-700">5.5만 미만</span>
-        <span class="font-black text-red-700">신청 불가</span>
-      </div>
+<!-- 점수 기준 안내 -->
+<div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-3 mb-4">
+  <div class="text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-2">
+    <i class="fas fa-circle-info mr-1 text-pink-400"></i>본캐 수로 점수 기준
+  </div>
+
+  <div class="space-y-1 text-[11px]">
+    <div class="flex items-center justify-between bg-amber-50 rounded-lg px-3 py-1.5">
+      <span class="font-bold text-amber-700">9만 이상</span>
+      <span class="font-black text-amber-700">전체 면제</span>
+    </div>
+
+    <div class="flex items-center justify-between bg-red-50 rounded-lg px-3 py-1.5">
+      <span class="font-bold text-red-700">9만 미만</span>
+      <span class="font-black text-red-700">신청 불가</span>
     </div>
   </div>
+</div>
 
   <!-- ==================== 신청 폼 ==================== -->
   <div id="formCard" class="bg-white rounded-3xl border border-gray-100 shadow-sm p-6 mb-4">
@@ -161,15 +161,15 @@
     toast._t = setTimeout(() => el.classList.add('hidden'), 3000);
   };
 
-  // 점수 → 신청 타입 (full / half)
-  // null = 점수 미입력 / 'ineligible' = 신청 불가 / 'full' / 'half'
+  // 점수 → 신청 타입 (full / ineligible)
+  // null = 점수 미입력 / 'ineligible' = 신청 불가 / 'full' = 전체 면제
   const requestTypeFromScore = (score) => {
     if (score == null || isNaN(score)) return null;
     const n = Number(score);
     if (n >= SCORE_FULL_THRESHOLD) return 'full';
-    if (n >= SCORE_HALF_THRESHOLD) return 'half';
     return 'ineligible';
   };
+
 
   // 점수 일괄 조회 (suro_scores 테이블)
   async function fetchScores(memberIds, periodId) {
@@ -252,10 +252,9 @@
     const score = state.mainScore;
     const hasScore = score != null;
     const reqType = requestTypeFromScore(score);
-    const badge = reqType === 'full' ? '<span class="badge-9만 text-[10px] font-black px-2 py-1 rounded-lg">9만+</span>'
-                : reqType === 'half' ? '<span class="badge-half text-[10px] font-black px-2 py-1 rounded-lg">5.5~9만</span>'
-                : reqType === 'ineligible' ? '<span class="text-[10px] font-black text-red-700 bg-red-100 px-2 py-1 rounded-lg">신청 불가</span>'
-                : '<span class="text-[10px] font-black text-gray-500 bg-gray-100 px-2 py-1 rounded-lg">점수 없음</span>';
+const badge = reqType === 'full' ? '<span class="badge-9만 text-[10px] font-black px-2 py-1 rounded-lg">9만+</span>'
+            : reqType === 'ineligible' ? '<span class="text-[10px] font-black text-red-700 bg-red-100 px-2 py-1 rounded-lg">신청 불가</span>'
+            : '<span class="text-[10px] font-black text-gray-500 bg-gray-100 px-2 py-1 rounded-lg">점수 없음</span>';
 
     const scoreInputClasses = !hasScore ? 'border-amber-300 text-amber-700'
       : reqType === 'full' ? 'border-emerald-200 text-emerald-600'
@@ -336,7 +335,7 @@
       const el = document.getElementById(id); if (el) el.classList.add('hidden');
     });
   }
-
+  
   // ============ 점수 변경 ============
   function onScoreChange(val) {
     const num = parseInt(val);
@@ -356,34 +355,55 @@
     updateReqTypeBadge();
   }
 
+  // ============ 신청 가능 여부 안내 ============
   function updateReqTypeBadge() {
     const badge = document.getElementById('reqTypeBadge');
     const note = document.getElementById('scoreNote');
     const submitBtn = document.getElementById('submitBtn');
+
     if (!badge) return;
+
     const reqType = requestTypeFromScore(state.mainScore);
+
     if (reqType === 'full') {
       badge.className = 'mt-2 text-[11px] font-bold px-3 py-2 rounded-xl text-center bg-amber-100 text-amber-700';
       badge.innerHTML = '<i class="fas fa-check-circle mr-1"></i>전체 면제 대상 (9만 이상)';
-      if (note) note.innerHTML = `<span class="text-amber-600"><i class="fas fa-bolt mr-0.5"></i>9만 이상이라 전체 면제 대상</span>`;
-      if (submitBtn) { submitBtn.disabled = false; submitBtn.classList.remove('opacity-40','cursor-not-allowed'); }
-    } else if (reqType === 'half') {
-      badge.className = 'mt-2 text-[11px] font-bold px-3 py-2 rounded-xl text-center bg-blue-100 text-blue-700';
-      badge.innerHTML = '<i class="fas fa-info-circle mr-1"></i>절반 면제 대상 (5.5만 이상 ~ 9만 미만)';
-      if (note) note.innerHTML = `<span class="text-blue-600"><i class="fas fa-info-circle mr-0.5"></i>5.5만 이상 ~ 9만 미만이라 절반 면제 대상</span>`;
-      if (submitBtn) { submitBtn.disabled = false; submitBtn.classList.remove('opacity-40','cursor-not-allowed'); }
+
+      if (note) {
+        note.innerHTML = '<span class="text-amber-600"><i class="fas fa-bolt mr-0.5"></i>9만 이상이라 전체 면제 대상</span>';
+      }
+
+      if (submitBtn) {
+        submitBtn.disabled = false;
+        submitBtn.classList.remove('opacity-40', 'cursor-not-allowed');
+      }
+
     } else if (reqType === 'ineligible') {
       badge.className = 'mt-2 text-[11px] font-bold px-3 py-2 rounded-xl text-center bg-red-100 text-red-700';
-      badge.innerHTML = '<i class="fas fa-circle-xmark mr-1"></i>신청 불가 — 본캐 수로 점수 5.5만 미만';
-      if (note) note.innerHTML = `<span class="text-red-600"><i class="fas fa-circle-xmark mr-0.5"></i>면제 신청 자격 미달 (5.5만 이상이어야 절반 면제 신청 가능)</span>`;
-      if (submitBtn) { submitBtn.disabled = true; submitBtn.classList.add('opacity-40','cursor-not-allowed'); }
+      badge.innerHTML = '<i class="fas fa-circle-xmark mr-1"></i>신청 불가 — 본캐 수로 점수 9만 미만';
+
+      if (note) {
+        note.innerHTML = '<span class="text-red-600"><i class="fas fa-circle-xmark mr-0.5"></i>면제 신청 자격 미달 (9만 이상이어야 신청 가능)</span>';
+      }
+
+      if (submitBtn) {
+        submitBtn.disabled = true;
+        submitBtn.classList.add('opacity-40', 'cursor-not-allowed');
+      }
+
     } else {
       badge.className = 'mt-2 text-[11px] font-bold px-3 py-2 rounded-xl text-center bg-gray-100 text-gray-500';
       badge.innerHTML = '점수를 입력해주세요';
+
       if (note) note.innerHTML = '';
-      if (submitBtn) { submitBtn.disabled = true; submitBtn.classList.add('opacity-40','cursor-not-allowed'); }
+
+      if (submitBtn) {
+        submitBtn.disabled = true;
+        submitBtn.classList.add('opacity-40', 'cursor-not-allowed');
+      }
     }
   }
+
 
   // ============ 부캐 리스트 렌더 ============
   function renderSubList() {
