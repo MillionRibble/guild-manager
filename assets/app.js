@@ -91,6 +91,7 @@ const GROUPS = [
     { k:'join_form',   t:'가입 신청',          i:'fa-user-plus' },
     { k:'absence_reg', t:'장기부재 캐릭 등록', i:'fa-bed' },
     { k:'bail_form',   t:'보석금 신청',        i:'fa-gem' },
+    { k:'homely_form', t:'보금자리 신청서', i:'fa-house' },
   ]},
   { label:'관리자 운영', lock:true, admin:true, items: [
     { k:'requests',    t:'신청 처리',     i:'fa-inbox', badge:3 },
