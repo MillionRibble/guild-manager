@@ -3110,7 +3110,6 @@ const PAGES = {
   role_assign: buildRoleAssign,
   suro_input:  buildSuroInput,
   sync:        buildSync,
-  bail_form:   buildBailForm,
   consulting:  buildConsulting,
   buddy:       buildBuddy,
   suro_exempt: buildSuroExempt,
