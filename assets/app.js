@@ -111,9 +111,7 @@ const GROUPS = [
   ]},
 ];
 const META = {}; GROUPS.forEach(g=>g.items.forEach(it=>META[it.k]={...it, admin:!!g.admin}));
-const href = (k)=> k==='homely_form'
-  ? 'https://hsb9912.github.io/guild-manager/exempt/'
-  : k==='home' ? 'index.html' : k + '.html';
+const href = (k)=> k==='home' ? 'index.html' : k + '.html';
 
 /* ============================================================
  *  업데이트 내역 (CHANGELOG)  ·  최신이 맨 위
